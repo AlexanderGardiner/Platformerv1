@@ -2,17 +2,17 @@ var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 var Running = true;
 
-var x = 60;
-var y = 200;
+var x = 70;
+var y = 50;
 var width = 10;
 var height = 10;
 
-var groundX = 50;
-var groundY = 40;
-var groundWidth = 100;
-var groundHeight = 100;
 
-var groundX
+var groundXValues = [50, 160,270,380,50];
+var groundYValues = [40, 50,50,100,100];
+var groundWidthValues = [100, 100,100,100,100];
+var groundHeightValues=[10, 10,20,10,10];
+
 
 var collisionTop = false;
 var collisionBottom = false;
@@ -27,12 +27,16 @@ var leftArrow = false;
 var jumping = false;
 var grounded = false;
 var lengthOfJump = 100;
-
+var gravity = 0.1;
 
 var velocityX = 0;
 var velocityY = 0;
 
+var collisionObject;
 
+
+
+ 
 document.addEventListener('keydown', function(event) {
     if(event.keyCode == 39) {
         rightArrow = true;
@@ -66,18 +70,18 @@ function DrawObject(x,y,sizeX,sizeY) {
 }
 function Gravity() {
   if (!collisionTop) {
-    velocityY -= 0.01;
+    velocityY -= gravity;
     grounded = false;
   } 
 }
 
 function HandleInput() {
   if (rightArrow && !collisionLeft) {
-    velocityX = 1;
+    velocityX = 2;
   }
-  
+      
   if (leftArrow && !collisionRight) {
-    velocityX =-1;
+    velocityX =-2;
   } 
   
   if (!leftArrow && !rightArrow) {
@@ -96,7 +100,7 @@ function HandleInput() {
 function HandleJumping() {
   if (jumping && grounded) {
 
-    velocityY += 1;
+    velocityY += 3;
     lengthOfJump -= 1;
   }
 
@@ -107,86 +111,144 @@ function HandleJumping() {
   }
 }
 
-function HandleCollision() {
+function HandleMultipleCollision() {
+  let topCollisions = 0;
+  let bottomCollisions = 0;
+  let rightCollisions = 0;
+  let leftCollisions = 0;
+  for (let i = 0; i < groundXValues.length; i++) {
+    //if touching top
+    if (y<=groundYValues[i]+groundHeightValues[i] && y>groundYValues[i]+2 && x+width>groundXValues[i]+5 && x<groundXValues[i]+groundWidthValues[i]-5) {
+      collisionTop = true;
+      collisionObject = i;
+      topCollisions +=1;
+    } 
+  
+    //if touching bottom
+    if (y+height>=groundYValues[i] && y+height<groundYValues[i]+groundHeightValues[i]-2&& x+width>groundXValues[i] && x<groundXValues[i]+groundWidthValues[i]) {
+      collisionBottom = true;
+      bottomCollisions +=1;
+    } 
+  
+    //if touching right
+    if (x<=groundXValues[i]+groundWidthValues[i] && x>groundXValues[i]+2 && y+height > groundYValues[i]+2 && y<groundYValues[i]+groundHeightValues[i]-2) {
+      collisionRight = true;
+      rightCollisions +=1;
+    } 
+    //if touching left
+    if(x+width>=groundXValues[i] && x+width<groundXValues[i]+groundWidthValues[i]-2 && y+height>groundYValues[i]+2 && y<groundYValues[i]+groundHeightValues[i]-2) {
+      collisionLeft = true;
+      leftCollisions +=1;
+    } 
 
-  //if touching top
-  if (y<=groundY+groundHeight && y>groundY+5 && x+width>groundX && x<groundX+groundWidth) {
-    collisionTop = true;
-  } else {
+  }
+
+  if (topCollisions==0) {
     collisionTop = false;
   }
 
-  //if touching bottom
-  if (y+height>=groundY && y+height<groundY+groundHeight-5 && x+width>groundX && x<groundX+groundWidth) {
-    collisionBottom = true;
-  } else {
+  if (bottomCollisions==0) {
     collisionBottom = false;
-  }
+  } 
 
-  //if touching right
-  if (x<=groundX+groundWidth && x>groundX+5 && y+height > groundY+5 && y<groundY+groundHeight-5) {
-    collisionRight = true;
-  } else {
-    collisionRight = false;
-  }
-  //if touching left
-  if(x+width>=groundX && x+width<groundX+groundWidth-5 && y+height>groundY+5 && y<groundY+groundHeight-5) {
-    collisionLeft = true;
-  } else {
+  if (leftCollisions==0) {
     collisionLeft = false;
-  }
+  } 
 
-
+  if (rightCollisions==0) {
+    collisionRight = false;
+  } 
+  
 }
+
+
 
 function HandleBasicCollision() {
   if(collisionTop) {
-    velocityY = 0;
+    if (velocityY<0) {
+      velocityY = 0;
+      y = groundYValues[collisionObject] + groundHeightValues[collisionObject];
+    }
+    
     grounded = true;
   }
 
   if(collisionBottom) {
-    //velocityY = 0;
-  }
+    jumping = false;
+    if (velocityY>0) {
+      velocityY = 0;
+      y-=1;
 
-  if (collisionLeft) {
-    velocityX = 0;
+    }
+
     
   }
 
-  if (collisionRight) {
-    velocityX = 0
+  if (collisionLeft && velocityX>0) {
+    velocityX = 0;
+    
+
+    
+    
   }
-  
+
+  if (collisionRight && velocityX<0) {
+    velocityX = 0;
+    
+
+    
+   
+  } 
+
+
+}
+
+function drawPlatforms() {
+  for (let i = 0; i < groundXValues.length; i++) {
+    DrawObject(groundXValues[i],groundYValues[i],groundWidthValues[i],groundHeightValues[i])
+  }
+
   
 }
-function Main() {
 
+function respawnDetection() {
+  if (y <= 3){
+    x = 50;
+    y = 100;
+    velocityY = 0;
+  }
+}
+function Main() {
+  
   clear()
   //Draw Player
+  respawnDetection();
   DrawObject(x,y,width,height)
 
   //Draw ground
-  DrawObject(groundX,groundY,groundWidth,groundHeight)
+  drawPlatforms();
+  //DrawObject(groundX,groundY,groundWidth,groundHeight)
   
-  
-  HandleCollision();
+  HandleMultipleCollision();
   HandleBasicCollision();
-  
+  //HandleCollision();
   Gravity();
+  
+  
+  
 
   HandleInput();
   
   HandleJumping();
 
+
+
+  y += velocityY;
   
-  
+  x += velocityX;
 
   
-  y+= velocityY
-  x += velocityX
+  window.requestAnimationFrame(Main);
 };
-setInterval(Main, 1);
 
-
-
+window.requestAnimationFrame(Main);
