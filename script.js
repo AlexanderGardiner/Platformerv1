@@ -1,17 +1,25 @@
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
-var Running = true;
 
-var x = 70;
-var y = 50;
+
+var x = 200;
+var y = 200;
 var width = 10;
 var height = 10;
 
 
-var groundXValues = [50, 160,270,380,50];
-var groundYValues = [40, 50,50,100,100];
+var groundXValues = [50, 170,270,380,50];
+var groundYValues = [40, 40,30,30,90];
 var groundWidthValues = [100, 100,100,100,100];
-var groundHeightValues=[10, 10,20,10,10];
+var groundHeightValues=[10, 20,20,80,20];
+
+var groundXValues = [ 600, 550, 500, 450, 150, 100, 50, 650, 350, 300, 250, 850, 800, 350 ];
+var groundYValues = [ 50, 50, 50, 50, 50, 50, 50, 100, 100, 100, 100, 150, 150, 150 ];
+var groundWidthValues = [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 ];
+var groundHeightValues= [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 ];
+
+
+
 
 
 var collisionTop = false;
@@ -26,13 +34,18 @@ var leftArrow = false;
 
 var jumping = false;
 var grounded = false;
-var lengthOfJump = 100;
-var gravity = 0.1;
+
+var gravity = 0.35;
+var speed = 3.1;
+var jumpSpeed = 5;
 
 var velocityX = 0;
 var velocityY = 0;
 
-var collisionObject;
+var collisionTopObject;
+var collisionBottomObject;
+var collisionLeftObject;
+var collisionRightObject;
 
 
 
@@ -77,11 +90,11 @@ function Gravity() {
 
 function HandleInput() {
   if (rightArrow && !collisionLeft) {
-    velocityX = 2;
+    velocityX = speed;
   }
       
   if (leftArrow && !collisionRight) {
-    velocityX =-2;
+    velocityX = -speed;
   } 
   
   if (!leftArrow && !rightArrow) {
@@ -100,15 +113,10 @@ function HandleInput() {
 function HandleJumping() {
   if (jumping && grounded) {
 
-    velocityY += 3;
-    lengthOfJump -= 1;
-  }
-
-
-  if (lengthOfJump == 0) {
+    velocityY = jumpSpeed;
     jumping = false;
-    lengthOfJump = 100;
   }
+
 }
 
 function HandleMultipleCollision() {
@@ -120,24 +128,27 @@ function HandleMultipleCollision() {
     //if touching top
     if (y<=groundYValues[i]+groundHeightValues[i] && y>groundYValues[i]+2 && x+width>groundXValues[i]+5 && x<groundXValues[i]+groundWidthValues[i]-5) {
       collisionTop = true;
-      collisionObject = i;
+      collisionTopObject = i;
       topCollisions +=1;
     } 
   
     //if touching bottom
-    if (y+height>=groundYValues[i] && y+height<groundYValues[i]+groundHeightValues[i]-2&& x+width>groundXValues[i] && x<groundXValues[i]+groundWidthValues[i]) {
+    if (y+height>=groundYValues[i] && y+height<groundYValues[i]+groundHeightValues[i]-2&& x+width>groundXValues[i]+5 && x<groundXValues[i]+groundWidthValues[i]+5) {
       collisionBottom = true;
+      collisionBottomObject
       bottomCollisions +=1;
     } 
   
     //if touching right
     if (x<=groundXValues[i]+groundWidthValues[i] && x>groundXValues[i]+2 && y+height > groundYValues[i]+2 && y<groundYValues[i]+groundHeightValues[i]-2) {
       collisionRight = true;
+      collisionRightObject = i;
       rightCollisions +=1;
     } 
     //if touching left
     if(x+width>=groundXValues[i] && x+width<groundXValues[i]+groundWidthValues[i]-2 && y+height>groundYValues[i]+2 && y<groundYValues[i]+groundHeightValues[i]-2) {
       collisionLeft = true;
+      collisionLeftObject = i;
       leftCollisions +=1;
     } 
 
@@ -167,7 +178,7 @@ function HandleBasicCollision() {
   if(collisionTop) {
     if (velocityY<0) {
       velocityY = 0;
-      y = groundYValues[collisionObject] + groundHeightValues[collisionObject];
+      y = groundYValues[collisionTopObject] + groundHeightValues[collisionTopObject];
     }
     
     grounded = true;
@@ -186,6 +197,10 @@ function HandleBasicCollision() {
 
   if (collisionLeft && velocityX>0) {
     velocityX = 0;
+    if (!grounded){
+      x-=1;
+    }
+
     
 
     
@@ -194,6 +209,10 @@ function HandleBasicCollision() {
 
   if (collisionRight && velocityX<0) {
     velocityX = 0;
+    if (!grounded){
+      x+=1
+    }
+
     
 
     
@@ -214,12 +233,58 @@ function drawPlatforms() {
 function respawnDetection() {
   if (y <= 3){
     x = 50;
-    y = 100;
+    y = 110;
     velocityY = 0;
   }
 }
-function Main() {
-  
+var deltaTime = 0;
+let lastTimestamp = 0;
+const perfectFrameTime = 1000/60;
+function start() {
+  requestAnimationFrame(Main);
+}
+
+
+function move() {
+  if (velocityY>0) {
+    for(let i=0; i<velocityY/3; i++) {
+      y += (3 * (deltaTime/perfectFrameTime));
+      HandleMultipleCollision();
+      HandleBasicCollision();
+    }
+  }
+
+  if (velocityY<0) {
+    for(let i=0; i<(velocityY*-1)/3; i++) {
+      y -= (3 * (deltaTime/perfectFrameTime));
+      HandleMultipleCollision();
+      HandleBasicCollision();
+    }
+  }
+
+
+
+  if (velocityX>0) {
+    for(let i=0; i<velocityX/3; i++) {
+      x += (3 * (deltaTime/perfectFrameTime));
+      HandleMultipleCollision();
+      HandleBasicCollision();
+    }
+  }
+
+  if (velocityX<0) {
+    for(let i=0; i<(velocityX*-1)/3; i++) {
+      x -= (3 * (deltaTime/perfectFrameTime));
+      HandleMultipleCollision();
+      HandleBasicCollision();
+    }
+  }
+}
+function Main(timestamp) {
+  requestAnimationFrame(Main);
+  deltaTime = timestamp-lastTimestamp;
+  lastTimestamp = timestamp;
+  //console.log(deltaTime);
   clear()
   //Draw Player
   respawnDetection();
@@ -241,14 +306,16 @@ function Main() {
   
   HandleJumping();
 
-
-
-  y += velocityY;
   
-  x += velocityX;
+    
+    
+  move();
+
+
+
+
 
   
-  window.requestAnimationFrame(Main);
 };
 
-window.requestAnimationFrame(Main);
+start()
