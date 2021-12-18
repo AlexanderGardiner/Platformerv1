@@ -2,17 +2,13 @@ var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
 
-var x = 200;
-var y = 200;
+var x = 590;
+var y = 220;
 var width = 10;
 var height = 10;
 
 
-var groundXValues = [50, 170,270,380,50];
-var groundYValues = [40, 40,30,30,90];
-var groundWidthValues = [100, 100,100,100,100];
-var groundHeightValues=[10, 20,20,80,20];
-
+var collisions = 0;
 
 var groundXValues = [ 100,80,60,40,20,0,460,440,420,400,380,220,200,180,160,140,340,320,300,280,220,200,480,460,440,420,400,340,320,300,280,280,260,240,220,180,160,140,120,100,340,320,300,280,260,240,620,600,580,560,480,460,440,420,400,700,680,660,780,760,740,680,660,640,620,580,560,540,520,480,460,420,400,360,340,300,280,440,420,400,380,360,340,580,560,540,520,500]
 var groundYValues = [ 20,20,20,20,20,20,40,40,40,40,40,40,40,40,40,40,60,60,60,60,60,60,80,80,80,80,80,100,100,100,100,120,140,140,140,160,160,160,160,160,180,180,180,180,180,180,200,200,200,200,200,200,200,200,200,220,220,220,240,240,240,260,260,260,260,280,280,280,280,300,300,320,320,340,340,340,340,380,380,380,380,380,380,400,400,400,400,400 ]
@@ -38,7 +34,7 @@ var jumping = false;
 var grounded = false;
 
 var gravity = 0.5;
-var speed = 3;
+var speed = 4;
 var jumpSpeed = 5.7;
 
 var velocityX = 0;
@@ -49,7 +45,8 @@ var collisionBottomObject;
 var collisionLeftObject;
 var collisionRightObject;
 
-
+var jumpTimerDefault = 4;
+var jumpTimer = jumpTimerDefault;
 
  
 document.addEventListener('keydown', function(event) {
@@ -87,18 +84,18 @@ function Gravity() {
   HandleMultipleCollision();
   HandleBasicCollision();
   if (!collisionTop) {
-    velocityY -= gravity;
+    velocityY -= gravity * (deltaTime/perfectFrameTime);
     grounded = false;
   } 
 }
 
 function HandleInput() {
   if (rightArrow && !collisionLeft) {
-    velocityX = speed * (deltaTime/perfectFrameTime);
+    velocityX = speed;
   }
       
   if (leftArrow && !collisionRight) {
-    velocityX = -speed * (deltaTime/perfectFrameTime);
+    velocityX = -speed;
   } 
   
   if (!leftArrow && !rightArrow) {
@@ -107,6 +104,13 @@ function HandleInput() {
 
 
   
+  if (grounded) {
+    jumpTimer = jumpTimerDefault;
+
+  } else if (jumpTimer > 0) {
+    jumpTimer -= 1 * (deltaTime/perfectFrameTime);
+  }
+
   if (upArrow) {
     jumping = true;
   } else {
@@ -115,15 +119,17 @@ function HandleInput() {
 }
 
 function HandleJumping() {
-  if (jumping && grounded) {
+  if (jumpTimer > 0 && jumping) {
 
     velocityY = jumpSpeed;
     jumping = false;
+    jumpTimer = 0;
   }
 
 }
 
 function HandleMultipleCollision() {
+  collisions += 1;
   let topCollisions = 0;
   let bottomCollisions = 0;
   let rightCollisions = 0;
@@ -131,6 +137,7 @@ function HandleMultipleCollision() {
   for (let i = 0; i < groundXValues.length; i++) {
     //if touching top
     if (y<=groundYValues[i]+groundHeightValues[i] && y>groundYValues[i]+2 && x+width>groundXValues[i]+5 && x<groundXValues[i]+groundWidthValues[i]-5) {
+      
       collisionTop = true;
       collisionTopObject = i;
       topCollisions +=1;
@@ -138,6 +145,7 @@ function HandleMultipleCollision() {
   
     //if touching bottom
     if (y+height>=groundYValues[i] && y+height<groundYValues[i]+groundHeightValues[i]-5&& x+width>groundXValues[i]+5 && x<groundXValues[i]+groundWidthValues[i]-5) {
+      
       collisionBottom = true;
       collisionBottomObject = i;
       bottomCollisions +=1;
@@ -145,12 +153,14 @@ function HandleMultipleCollision() {
   
     //if touching right
     if (x<=groundXValues[i]+groundWidthValues[i] && x>groundXValues[i]+2 && y+height > groundYValues[i]+2 && y<groundYValues[i]+groundHeightValues[i]-2) {
+      
       collisionRight = true;
       collisionRightObject = i;
       rightCollisions +=1;
     } 
     //if touching left
     if(x+width>=groundXValues[i] && x+width<groundXValues[i]+groundWidthValues[i]-2 && y+height>groundYValues[i]+2 && y<groundYValues[i]+groundHeightValues[i]-2) {
+      
       collisionLeft = true;
       collisionLeftObject = i;
       leftCollisions +=1;
@@ -196,7 +206,7 @@ function HandleBasicCollision() {
 
     }
 
-    y = Math.ceil(groundYValues[collisionBottomObject] - width)
+    y = Math.ceil(groundYValues[collisionBottomObject] - height)
 
     
   }
@@ -204,7 +214,7 @@ function HandleBasicCollision() {
   if (collisionLeft) {
     velocityX = 0;
 
-
+    x = Math.ceil(groundXValues[collisionLeftObject]-width)
     
     
     
@@ -213,7 +223,7 @@ function HandleBasicCollision() {
 
   if (collisionRight) {
     velocityX = 0;
-
+    x = Math.ceil(groundXValues[collisionRightObject] + groundWidthValues[collisionRightObject])
 
     
 
@@ -287,7 +297,7 @@ function move() {
   }
 }
 function Main(timestamp) {
-  
+  collisions = 0;
   deltaTime = timestamp-lastTimestamp;
   lastTimestamp = timestamp;
 
@@ -318,7 +328,16 @@ function Main(timestamp) {
   DrawObject(x,y,width,height)
   ctx.fillStyle = "#000000";
 
-  document.getElementById("demo").innerHTML = "x: "+ x + " y: " + y;
+  document.getElementById("Position").innerHTML = "x: "+ x + " y: " + y;
+  
+  document.getElementById("Velocity").innerHTML = "Velocity X: "+ velocityX + " Velocity Y: " + velocityY;
+  document.getElementById("FPS").innerHTML = "FPS: " + 1000/deltaTime;
+  document.getElementById("CollisionFunctionsPerFrame").innerHTML = "Collision Functions Per Frame: " + collisions;
+  document.getElementById("CoyoteTime").innerHTML = "CoyoteTime: " + jumpTimer;
+  document.getElementById("CollisionTop").innerHTML = "Collision Top: " + collisionTop;
+  document.getElementById("CollisionBottom").innerHTML = "Collision Bottom: " + collisionBottom;
+  document.getElementById("CollisionLeft").innerHTML = "Collision Left: " + collisionLeft;
+  document.getElementById("CollisionRight").innerHTML = "Collision Right: " + collisionRight;
 
 
   requestAnimationFrame(Main);
