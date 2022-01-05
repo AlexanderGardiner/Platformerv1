@@ -39,6 +39,13 @@ var objectTypeValues = [1,1,1,1,1,1,2,2,1,1,1,1,2,1,2,1,1,1,2,1,1,1,1,1,1,2,1,1,
 
 
 
+
+
+
+
+
+
+
 var collisionTop = false;
 var collisionBottom = false;
 var collisionLeft = false;
@@ -336,7 +343,11 @@ function drawObjects() {
       ctx.fillStyle = "#FF0000";
       DrawObject(objectXValues[i],objectYValues[i],objectWidthValues[i],objectHeightValues[i]);
       ctx.fillStyle = "#000000";
-    } 
+    } else if (objectTypeValues[i]==3) {
+      ctx.fillStyle = "#0000FF";
+      DrawObject(objectXValues[i],objectYValues[i],objectWidthValues[i],objectHeightValues[i]);
+      ctx.fillStyle = "#000000";
+    }
     
   }
 
