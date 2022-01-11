@@ -1,8 +1,8 @@
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
-var spawnX = 30;
-var spawnY=40;
+var spawnX = 50;
+var spawnY=50;
 
 var x = spawnX;
 var y = spawnY;
@@ -17,27 +17,17 @@ var maxCollisionFunctionsPerFrame = 0;
 
 
 
-var objectXValues = [440,420,402,382,362,342,322,160,40,20,0,700,460,440,340,260,100,860,842,820,802,780,480,460,200,900,480,300,480,400,380,360,940,580,480,382,660,560,480,380,900,480,300,280,940,480,462,442,220,860,800,780,760,740,442,700,680,660,442,180,120,102,80,420,400,380,360,60,620,600,580,560,42,542,220,40,640,542,280,22,140,20,800,780,760,740,720,660,100,80,840,880,940,920,760,600,580,560,540,380,240,700,460,100,80,60,40,20,900,880,860,840,820,200];
-var objectYValues = [20,20,22,22,22,22,22,20,20,20,20,40,40,40,40,40,40,60,62,60,62,60,60,60,60,80,80,80,100,100,100,100,120,120,120,122,140,140,140,140,160,160,160,160,180,180,182,182,180,200,200,200,200,200,202,220,220,220,222,220,220,222,220,240,240,240,240,240,260,260,260,260,262,282,280,280,300,302,300,302,320,320,340,340,340,340,340,340,340,340,360,380,400,400,400,400,400,400,400,400,400,420,420,420,420,420,420,420,440,440,440,440,440,440];
-var objectWidthValues = [20,20,16,16,16,16,16,20,20,20,20,20,20,20,20,20,20,20,16,20,16,20,20,20,20,20,20,20,20,20,20,20,20,20,20,16,20,20,20,20,20,20,20,20,20,20,16,16,20,20,20,20,20,20,16,20,20,20,16,20,20,16,20,20,20,20,20,20,20,20,20,20,16,16,20,20,20,16,20,16,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20];
-var objectHeightValues = [20,20,16,16,16,16,16,20,20,20,20,20,20,20,20,20,20,20,16,20,16,20,20,20,20,20,20,20,20,20,20,20,20,20,20,16,20,20,20,20,20,20,20,20,20,20,16,16,20,20,20,20,20,20,16,20,20,20,16,20,20,16,20,20,20,20,20,20,20,20,20,20,16,16,20,20,20,16,20,16,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20];
-var objectTypeValues = [1,1,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,2,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,2,1,1,1,1,1,1,2,1,1,1,2,1,1,2,1,1,1,1,1,1,1,1,1,1,2,2,1,1,1,2,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
 
 
+var objectXValues = [420,322,302,260,60,40,20,940,920,880,660,600,520,160,902,780,622,360,220,120,900,622,940,620,920,362,760,580,60,840,700,602,280,180,660,600,500,400,40,360,120,460,20,900,720,280,202,182,162,142,120,60,322,302,220,940,840,780,620,440,340,60,700,540,960,400,920,880,680,300,200,800,560,440,242,140,720,640,360,260,242,100,80,60,40,20,500,80,20];
 
-var objectXValues = [220,80,60,40,20,900,882,862,840,760,620,400,262,140,742,680,560,320,262,940,700,660,480,260,240,282,260,920,682,40,860,420,340,20,760,720,660,580,480,360,200,160,80,0,820,800,780,420,920,762,720,440,40,762,540,220,60,940,760,340,122,100,80,620,920,780,180,940,640,860,720,300,80,60,40,20,920,660,440,160,80,20,800,540,520,260,80,20,760,240];
+var objectYValues = [20,22,22,20,20,20,20,40,40,40,40,40,40,40,62,60,62,60,60,60,80,82,100,100,120,122,140,140,140,160,160,162,160,160,180,180,180,180,180,200,200,220,220,240,260,260,262,262,262,262,260,260,282,282,280,300,300,300,300,300,300,300,320,320,340,340,360,400,400,400,400,420,420,420,422,420,440,440,440,440,442,440,440,440,440,440,460,460,460];
 
-var objectYValues = [20,20,20,20,20,40,42,42,40,40,40,40,42,40,62,60,60,60,62,80,80,80,80,80,80,102,100,140,142,140,160,160,160,160,180,180,180,180,180,180,180,220,220,220,240,240,240,240,260,262,260,260,260,282,280,280,280,300,300,300,302,300,300,320,340,340,340,380,380,400,400,400,400,400,400,400,420,420,420,420,420,420,440,440,440,440,440,440,460,460];
+var objectWidthValues = [20,16,16,20,20,20,20,20,20,20,20,20,20,20,16,20,16,20,20,20,20,16,20,20,20,16,20,20,20,20,20,16,20,20,20,20,20,20,20,20,20,20,20,20,20,20,16,16,16,16,20,20,16,16,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,16,20,20,20,20,20,16,20,20,20,20,20,20,20,20];
 
-var objectWidthValues = [20,20,20,20,20,20,16,16,20,20,20,20,16,20,16,20,20,20,16,20,20,20,20,20,20,16,20,20,16,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,16,20,20,20,16,20,20,20,20,20,20,16,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20];
+var objectHeightValues = [20,16,16,20,20,20,20,20,20,20,20,20,20,20,16,20,16,20,20,20,20,16,20,20,20,16,20,20,20,20,20,16,20,20,20,20,20,20,20,20,20,20,20,20,20,20,16,16,16,16,20,20,16,16,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,16,20,20,20,20,20,16,20,20,20,20,20,20,20,20];
 
-var objectHeightValues = [20,20,20,20,20,20,16,16,20,20,20,20,16,20,16,20,20,20,16,20,20,20,20,20,20,16,20,20,16,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,16,20,20,20,16,20,20,20,20,20,20,16,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20];
-
-var objectTypeValues = [1,1,1,1,1,1,2,2,1,1,1,1,2,1,2,1,1,1,2,1,1,1,1,1,1,2,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,2,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
-
-
-
-
+var objectTypeValues = [1,2,2,1,1,1,1,1,1,1,1,1,1,1,2,1,2,1,1,1,1,2,3,1,1,2,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,1,1,2,2,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,2,1,1,1,1,1,1,1,1];
 
 
 
@@ -114,7 +104,7 @@ function DrawObject(x,y,sizeX,sizeY) {
 }
 function Gravity() {
 
-  if (!collisionTop) {
+  if (!(objectTypeValues[collisionTopObject] ==1 && collisionTop)) {
     velocityY -= gravity * (deltaTime/perfectFrameTime);
     grounded = false;
   } 
@@ -122,12 +112,12 @@ function Gravity() {
 
 function HandleInput() {
   
-  if (rightArrow && !collisionLeft && velocityX < speed) {
+  if (rightArrow && !(objectTypeValues[collisionLeftObject]==1 && collisionLeft) && velocityX < speed) {
     velocityX += (0.6 *(deltaTime/perfectFrameTime));
     
   }
       
-  if (leftArrow && !collisionRight && velocityX > -speed) {
+  if (leftArrow && !(objectTypeValues[collisionRightObject]==1 && collisionRight) && velocityX > -speed) {
     velocityX -= (0.6 *(deltaTime/perfectFrameTime));
   } 
   
@@ -249,14 +239,16 @@ function HandleBasicCollision() {
       }
       
       grounded = true;
-    } else if (objectTypeValues[collisionTopObject]==2) {
+    } 
+    if (objectTypeValues[collisionTopObject]==2) {
       velocityY = 0;
       x = spawnX;
       y = spawnY;
-    } else if (objectTypeValues[collisionTopObject]==3) {
+    }  
+    if (objectTypeValues[collisionTopObject]==3) {
       
-      spawnX = x;
-      spawnY = y;
+      spawnX = objectXValues[collisionTopObject];
+      spawnY = objectYValues[collisionTopObject];
     
     }
     
@@ -273,14 +265,16 @@ function HandleBasicCollision() {
       }
       
 
-    } else if (objectTypeValues[collisionBottomObject]==2) {
+    } 
+    if (objectTypeValues[collisionBottomObject]==2) {
       velocityY = 0;
       x = spawnX;
       y = spawnY;
-    } else if (objectTypeValues[collisionTopObject]==3) {
+    }  
+    if (objectTypeValues[collisionTopObject]==3) {
       
-      spawnX = x;
-      spawnY = y;
+      spawnX = objectXValues[collisionTopObject];
+      spawnY = objectYValues[collisionTopObject];
     
     }
     
@@ -296,14 +290,16 @@ function HandleBasicCollision() {
         
       }
       
-    } else if (objectTypeValues[collisionLeftObject]==2) {
+    }  
+    if (objectTypeValues[collisionLeftObject]==2) {
       velocityY = 0;
       x = spawnX;
       y = spawnY;
-    } else if (objectTypeValues[collisionTopObject]==3) {
+    }  
+    if (objectTypeValues[collisionTopObject]==3) {
       
-      spawnX = x;
-      spawnY = y;
+      spawnX = objectXValues[collisionTopObject];
+      spawnY = objectYValues[collisionTopObject];
     
     }
     
@@ -318,14 +314,16 @@ function HandleBasicCollision() {
       }
       
     
-    } else if (objectTypeValues[collisionRightObject]==2) {
+    }  
+    if (objectTypeValues[collisionRightObject]==2) {
       velocityY = 0;
       x = spawnX;
       y = spawnY;
-    } else if (objectTypeValues[collisionTopObject]==3) {
+    }  
+    if (objectTypeValues[collisionTopObject]==3) {
       
-      spawnX = x;
-      spawnY = y;
+      spawnX = objectXValues[collisionTopObject];
+      spawnY = objectYValues[collisionTopObject];
     
     }
     
@@ -373,19 +371,19 @@ function start() {
 function move() {
   if (velocityY>0) {
     for(let i=0; i<velocityY; i++) {
-      
-      y += (deltaTime/perfectFrameTime);
       HandleMultipleCollision();
       HandleBasicCollision();
+      y += (deltaTime/perfectFrameTime);
+      
       
     }
   } else if (velocityY<0) {
     for(let i=0; i<(velocityY*-1); i++) {
       
-
-      y -= (deltaTime/perfectFrameTime);
       HandleMultipleCollision();
       HandleBasicCollision();
+      y -= (deltaTime/perfectFrameTime);
+      
 
     }
   }
@@ -394,17 +392,18 @@ function move() {
 
   if (velocityX>0) {
     for(let i=0; i<velocityX; i++) {
-      x += (deltaTime/perfectFrameTime);
       HandleMultipleCollision();
       HandleBasicCollision();
+      x += (deltaTime/perfectFrameTime);
+      
 
     }
   } else if (velocityX<0) {
     for(let i=0; i<(velocityX*-1); i++) {
-
-      x -= (deltaTime/perfectFrameTime);
       HandleMultipleCollision();
       HandleBasicCollision();
+      x -= (deltaTime/perfectFrameTime);
+  
 
     }
   }
@@ -442,17 +441,17 @@ function Main(timestamp) {
   DrawObject(x,y,width,height)
   ctx.fillStyle = "#000000";
 
-  //document.getElementById("Position").innerHTML = "x: "+ x + " y: " + y;
-  
-  //document.getElementById("Velocity").innerHTML = "Velocity X: "+ velocityX + " Velocity Y: " + velocityY;
-  //document.getElementById("FPS").innerHTML = "FPS: " + 1000/deltaTime;
-  //document.getElementById("CollisionFunctionsPerFrame").innerHTML = "Collision Functions Per Frame: " + collisionsFunctions;
-  //document.getElementById("NaxCollisionFunctionsPerFrame").innerHTML = "Maximum Collision Functions Per Frame: " + maxCollisionFunctionsPerFrame;
-  //document.getElementById("CoyoteTime").innerHTML = "CoyoteTime: " + jumpTimer;
-  //document.getElementById("CollisionTop").innerHTML = "Collision Top: " + collisionTop;
-  //document.getElementById("CollisionBottom").innerHTML = "Collision Bottom: " + collisionBottom;
-  //document.getElementById("CollisionLeft").innerHTML = "Collision Left: " + collisionLeft;
-  //document.getElementById("CollisionRight").innerHTML = "Collision Right: " + collisionRight;
+  document.getElementById("Position").innerHTML = "x: "+ x + " y: " + y;
+
+  document.getElementById("Velocity").innerHTML = "Velocity X: "+ velocityX + " Velocity Y: " + velocityY;
+document.getElementById("FPS").innerHTML = "FPS: " + 1000/deltaTime;
+  document.getElementById("CollisionFunctionsPerFrame").innerHTML = "Collision Functions Per Frame: " + collisionsFunctions;
+  document.getElementById("NaxCollisionFunctionsPerFrame").innerHTML = "Maximum Collision Functions Per Frame: " + maxCollisionFunctionsPerFrame;
+  document.getElementById("CoyoteTime").innerHTML = "CoyoteTime: " + jumpTimer;
+  document.getElementById("CollisionTop").innerHTML = "Collision Top: " + collisionTop;
+ document.getElementById("CollisionBottom").innerHTML = "Collision Bottom: " + collisionBottom;
+  document.getElementById("CollisionLeft").innerHTML = "Collision Left: " + collisionLeft;
+  document.getElementById("CollisionRight").innerHTML = "Collision Right: " + collisionRight;
   
   if (collisionsFunctions>maxCollisionFunctionsPerFrame) {
     maxCollisionFunctionsPerFrame = collisionsFunctions;
