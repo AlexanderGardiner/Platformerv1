@@ -49,10 +49,10 @@ var jumpSpeed = defaultJumpSpeed;
 var velocityX = 0;
 var velocityY = 0;
 
-var collisionTopObject;
-var collisionBottomObject;
-var collisionLeftObject;
-var collisionRightObject;
+var collisionTopObject = [];
+var collisionBottomObject= [];
+var collisionLeftObject=[];
+var collisionRightObject=[];
 
 var jumpTimerDefault = 3;
 var jumpTimer = jumpTimerDefault;
@@ -316,7 +316,10 @@ function HandleJumping() {
 }
 
 function HandleMultipleCollision() {
-  
+  collisionTopObject = [];
+  collisionBottomObject = [];
+  collisionLeftObject = [];
+  collisionRightObject = [];
   let topCollisions = 0;
   let bottomCollisions = 0;
   let rightCollisions = 0;
@@ -326,8 +329,8 @@ function HandleMultipleCollision() {
     //if touching top
     if (y<=objectYValues[currentLevelNumber][i]+objectHeightValues[currentLevelNumber][i] && y>objectYValues[currentLevelNumber][i] && x+width>objectXValues[currentLevelNumber][i]+2 && x<objectXValues[currentLevelNumber][i]+objectWidthValues[currentLevelNumber][i]-2 && objectTypeValues[currentLevelNumber][i] !=0) {
       
-      collisionTop = true;
-      collisionTopObject = i;
+      collisionTop = true
+      collisionTopObject.push(i);
       topCollisions +=1;
     } 
   
@@ -335,7 +338,7 @@ function HandleMultipleCollision() {
     if (y+height>=objectYValues[currentLevelNumber][i] && y+height<objectYValues[currentLevelNumber][i]+objectHeightValues[currentLevelNumber][i]&& x+width>objectXValues[currentLevelNumber][i]+2 && x<objectXValues[currentLevelNumber][i]+objectWidthValues[currentLevelNumber][i]-2&& objectTypeValues[currentLevelNumber][i] !=0) {
       
       collisionBottom = true;
-      collisionBottomObject = i;
+      collisionBottomObject.push(i);
       bottomCollisions +=1;
     } 
   
@@ -343,14 +346,14 @@ function HandleMultipleCollision() {
     if (x<=objectXValues[currentLevelNumber][i]+objectWidthValues[currentLevelNumber][i] && x>objectXValues[currentLevelNumber][i] && y+height > objectYValues[currentLevelNumber][i]+2 && y<objectYValues[currentLevelNumber][i]+objectHeightValues[currentLevelNumber][i]-2&& objectTypeValues[currentLevelNumber][i] !=0) {
       
       collisionRight = true;
-      collisionRightObject = i;
+      collisionRightObject.push(i);
       rightCollisions +=1;
     } 
     //if touching left
     if(x+width>=objectXValues[currentLevelNumber][i] && x<objectXValues[currentLevelNumber][i]+objectWidthValues[currentLevelNumber][i]-2 && y+height>objectYValues[currentLevelNumber][i]+2 && y<objectYValues[currentLevelNumber][i]+objectHeightValues[currentLevelNumber][i]-2&& objectTypeValues[currentLevelNumber][i] !=0) {
       
       collisionLeft = true;
-      collisionLeftObject = i;
+      collisionLeftObject.push(i);
       leftCollisions +=1;
     } 
 
@@ -377,117 +380,122 @@ function HandleMultipleCollision() {
 
 
 function HandleBasicCollision() {
-  if(collisionTop) {
-    if (objectTypeValues[currentLevelNumber][collisionTopObject]==1) {
-      bottomHit = true;
-      if (velocityY<0) {
-        //y = Math.ceil(objectYValues[currentLevelNumber][collisionTopObject] + objectHeightValues[currentLevelNumber][collisionTopObject]);
-        velocityY = 0;
-
+  for (let i = 0; i < collisionTopObject.length; i++) {
+    if(collisionTop) {
+      if (objectTypeValues[currentLevelNumber][collisionTopObject[i]]==1) {
+        bottomHit = true;
+        if (velocityY<0) {
+          //y = Math.ceil(objectYValues[currentLevelNumber][collisionTopObject] + objectHeightValues[currentLevelNumber][collisionTopObject]);
+          velocityY = 0;
+  
+        }
+  
+  
+        grounded = true;
+      } 
+      if (objectTypeValues[currentLevelNumber][collisionTopObject[i]]==2) {
+        death();
+      }  
+      if (objectTypeValues[currentLevelNumber][collisionTopObject[i]]==3) {
+        
+        spawnX = objectXValues[currentLevelNumber][collisionTopObject[i]];
+        spawnY = objectYValues[currentLevelNumber][collisionTopObject[i]];
+      
       }
+      if (objectTypeValues[currentLevelNumber][collisionTopObject[i]]==4) {
+        victory=true;
+      }
+    }
+  }
 
+  for (let i = 0; i < collisionBottomObject.length; i++) {
+    if(collisionBottom) {
+      if (objectTypeValues[currentLevelNumber][collisionBottomObject[i]]==1) {
+        jumping = false;
+        topHit=true;
+        
+        if (velocityY>0) {
+  
+          //y = Math.ceil(objectYValues[currentLevelNumber][collisionBottomObject] - height);
+          velocityY = 0;
+          
+        }
+        
+  
+      } 
+      if (objectTypeValues[currentLevelNumber][collisionBottomObject[i]]==2) {
+        death();
+      }  
+      if (objectTypeValues[currentLevelNumber][collisionTopObject[i]]==3) {
+        
+        spawnX = objectXValues[currentLevelNumber][collisionTopObject[i]];
+        spawnY = objectYValues[currentLevelNumber][collisionTopObject[i]];
+      
+      }
+  
+      if (objectTypeValues[currentLevelNumber][collisionTopObject[i]]==4) {
+        victory=true;
+      }
+      
+    }
+  }
 
-      grounded = true;
+  for (let i = 0; i < collisionBottomObject.length; i++) {
+    if (collisionLeft) {
+      if (objectTypeValues[currentLevelNumber][collisionLeftObject[i]]==1) {
+        leftHit=true;
+        if (velocityX>0) {
+          //x=Math.ceil(objectXValues[currentLevelNumber][collisionLeftObject]-width);
+          velocityX = 0;
+  
+      
+          
+        }
+        
+      }  
+      if (objectTypeValues[currentLevelNumber][collisionLeftObject[i]]==2) {
+        death();
+  
+      }  
+      if (objectTypeValues[currentLevelNumber][collisionTopObject[i]]==3) {
+        
+        spawnX = objectXValues[currentLevelNumber][collisionTopObject[i]];
+        spawnY = objectYValues[currentLevelNumber][collisionTopObject[i]];
+      
+      }
+      if (objectTypeValues[currentLevelNumber][collisionTopObject[i]]==4) {
+        victory=true;
+      }
+    }
+  
+    if (collisionRight) {
+      
+      if (objectTypeValues[currentLevelNumber][collisionRightObject[i]]==1) {
+        rightHit=true;
+        if (velocityX<0) {
+          //x=Math.ceil(objectXValues[currentLevelNumber][collisionRightObject]+objectWidthValues[currentLevelNumber][collisionRightObject]);
+          velocityX = 0;
+          
+        }
+        
+      
+      }  
+      if (objectTypeValues[currentLevelNumber][collisionRightObject[i]]==2) {
+        death();
+      }  
+      if (objectTypeValues[currentLevelNumber][collisionTopObject[i]]==3) {
+        
+        spawnX = objectXValues[currentLevelNumber][collisionTopObject[i]];
+        spawnY = objectYValues[currentLevelNumber][collisionTopObject];
+      
+      }
+      
+      if (objectTypeValues[currentLevelNumber][collisionTopObject[i]]==4) {
+        victory=true;
+      }
     } 
-    if (objectTypeValues[currentLevelNumber][collisionTopObject]==2) {
-      death();
-    }  
-    if (objectTypeValues[currentLevelNumber][collisionTopObject]==3) {
-      
-      spawnX = objectXValues[currentLevelNumber][collisionTopObject];
-      spawnY = objectYValues[currentLevelNumber][collisionTopObject];
-    
-    }
-    if (objectTypeValues[currentLevelNumber][collisionTopObject]==4) {
-      victory=true;
-    }
+
   }
-
-  if(collisionBottom) {
-    if (objectTypeValues[currentLevelNumber][collisionBottomObject]==1) {
-      jumping = false;
-      topHit=true;
-      
-      if (velocityY>0) {
-
-        //y = Math.ceil(objectYValues[currentLevelNumber][collisionBottomObject] - height);
-        velocityY = 0;
-        
-      }
-      
-
-    } 
-    if (objectTypeValues[currentLevelNumber][collisionBottomObject]==2) {
-      death();
-    }  
-    if (objectTypeValues[currentLevelNumber][collisionTopObject]==3) {
-      
-      spawnX = objectXValues[currentLevelNumber][collisionTopObject];
-      spawnY = objectYValues[currentLevelNumber][collisionTopObject];
-    
-    }
-
-    if (objectTypeValues[currentLevelNumber][collisionTopObject]==4) {
-      victory=true;
-    }
-    
-  }
-
-  if (collisionLeft) {
-    if (objectTypeValues[currentLevelNumber][collisionLeftObject]==1) {
-      leftHit=true;
-      if (velocityX>0) {
-        //x=Math.ceil(objectXValues[currentLevelNumber][collisionLeftObject]-width);
-        velocityX = 0;
-
-    
-        
-      }
-      
-    }  
-    if (objectTypeValues[currentLevelNumber][collisionLeftObject]==2) {
-      death();
-
-    }  
-    if (objectTypeValues[currentLevelNumber][collisionTopObject]==3) {
-      
-      spawnX = objectXValues[currentLevelNumber][collisionTopObject];
-      spawnY = objectYValues[currentLevelNumber][collisionTopObject];
-    
-    }
-    if (objectTypeValues[currentLevelNumber][collisionTopObject]==4) {
-      victory=true;
-    }
-  }
-
-  if (collisionRight) {
-    
-    if (objectTypeValues[currentLevelNumber][collisionRightObject]==1) {
-      rightHit=true;
-      if (velocityX<0) {
-        //x=Math.ceil(objectXValues[currentLevelNumber][collisionRightObject]+objectWidthValues[currentLevelNumber][collisionRightObject]);
-        velocityX = 0;
-        
-      }
-      
-    
-    }  
-    if (objectTypeValues[currentLevelNumber][collisionRightObject]==2) {
-      death();
-    }  
-    if (objectTypeValues[currentLevelNumber][collisionTopObject]==3) {
-      
-      spawnX = objectXValues[currentLevelNumber][collisionTopObject];
-      spawnY = objectYValues[currentLevelNumber][collisionTopObject];
-    
-    }
-    
-    if (objectTypeValues[currentLevelNumber][collisionTopObject]==4) {
-      victory=true;
-    }
-  } 
-
-
 }
 
 function drawObjects() {
