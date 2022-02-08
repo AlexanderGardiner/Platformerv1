@@ -1,0 +1,13 @@
+
+
+div.shownDebugFeatures > * {
+  position: relative;
+  display: inline;
+}
+
+
+div.hiddenDebugFeatures > * {
+  position:absolute;
+  display: none;
+}
+
