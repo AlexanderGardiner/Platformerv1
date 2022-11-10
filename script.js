@@ -121,7 +121,7 @@ var objectTypeValues = [[1,2,2,1,1,1,1,1,1,1,1,1,1,1,2,1,2,1,1,1,1,2,3,1,1,2,1,1
                        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,1,1,1,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,4,4,4,1]];
 
 
-
+/*
 var objectXValues = [[240,220,200,180,140,120,100,80,60,40,20,180,160,140]];
 
 var objectYValues = [[20,20,20,20,20,20,20,20,20,20,20,40,40,40]];
@@ -135,7 +135,7 @@ var objectTypeValues = [[1,1,1,1,1,1,1,1,1,1,1,4,1,4]];
 
 
 
-
+*/
 
  
 document.addEventListener('keydown', function(event) {
@@ -385,7 +385,7 @@ function HandleBasicCollision() {
       if (objectTypeValues[currentLevelNumber][collisionTopObject[i]]==1) {
         bottomHit = true;
         if (velocityY<0) {
-          //y = Math.ceil(objectYValues[currentLevelNumber][collisionTopObject] + objectHeightValues[currentLevelNumber][collisionTopObject]);
+          //y = Math.ceil(objectYValues[currentLevelNumber][collisionTopObject[i]] + objectHeightValues[currentLevelNumber][collisionTopObject[i]]);
           velocityY = 0;
   
         }
@@ -416,8 +416,8 @@ function HandleBasicCollision() {
         
         if (velocityY>0) {
   
-          //y = Math.ceil(objectYValues[currentLevelNumber][collisionBottomObject] - height);
-          velocityY = 0;
+          //y = Math.ceil(objectYValues[currentLevelNumber][collisionBottomObject[i]] - height);
+          velocityY = -0;
           
         }
         
@@ -440,12 +440,12 @@ function HandleBasicCollision() {
     }
   }
 
-  for (let i = 0; i < collisionBottomObject.length; i++) {
+  for (let i = 0; i < collisionLeftObject.length; i++) {
     if (collisionLeft) {
       if (objectTypeValues[currentLevelNumber][collisionLeftObject[i]]==1) {
         leftHit=true;
         if (velocityX>0) {
-          //x=Math.ceil(objectXValues[currentLevelNumber][collisionLeftObject]-width);
+          //x=Math.ceil(objectXValues[currentLevelNumber][collisionLeftObject[i]]-width);
           velocityX = 0;
   
       
@@ -467,13 +467,14 @@ function HandleBasicCollision() {
         victory=true;
       }
     }
-  
+  }
+  for (let i = 0; i < collisionRightObject.length; i++) {
     if (collisionRight) {
       
       if (objectTypeValues[currentLevelNumber][collisionRightObject[i]]==1) {
         rightHit=true;
         if (velocityX<0) {
-          //x=Math.ceil(objectXValues[currentLevelNumber][collisionRightObject]+objectWidthValues[currentLevelNumber][collisionRightObject]);
+          //x=Math.ceil(objectXValues[currentLevelNumber][collisionRightObject[i]]+objectWidthValues[currentLevelNumber][collisionRightObject]);
           velocityX = 0;
           
         }
@@ -672,6 +673,10 @@ function Main(timestamp) {
     document.getElementById("CollisionBottom").innerHTML = "Collision Bottom: " + collisionBottom;
     document.getElementById("CollisionLeft").innerHTML = "Collision Left: " + collisionLeft;
     document.getElementById("CollisionRight").innerHTML = "Collision Right: " + collisionRight;
+    document.getElementById("CollisionObjectTop").innerHTML = "Collision Objects Top: " + collisionTopObject;
+    document.getElementById("CollisionObjectBottom").innerHTML = "Collision Objects Bottom: " + collisionBottomObject;
+    document.getElementById("CollisionObjectLeft").innerHTML = "Collision Objects Left: " + collisionLeftObject;
+    document.getElementById("CollisionObjectRight").innerHTML = "Collision Objects Right: " + collisionRightObject;
   }
   
   
